@@ -1,0 +1,21 @@
+# Datos crudos (pueden ser grandes)
+datos/crudos/
+
+# Compilación C++
+*.o
+*.obj
+*.exe
+*.out
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
