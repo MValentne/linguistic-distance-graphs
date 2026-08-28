@@ -138,3 +138,63 @@ La pregunta central pasó a ser: *¿Qué estructura computacional tiene la red d
 - [ ] Analizar centralidad de idiomas en la red global
 
 ---
+
+## Sesión 5 — 2026-08-26
+
+### Investigación: Holman et al. (2008)
+
+Se investigó el paper clave **"Explorations in automated language classification"** (Holman et al. 2008, *Folia Linguistica* 42(3-4): 331-354).
+
+**Hallazgos:**
+- El paper presenta una **refinación** del método ASJP, seleccionando los 40 ítems más estables de la lista de Swadesh (de 100 originales)
+- La **distancia Levenshtein normalizada y corregida (LDND)** es la métrica principal validada
+- La lista de 40 ítems produce clasificaciones **al menos tan buenas** como la de 100
+- Sevalida que LDND correlaciona bien con clasificaciones de lingüistas históricos
+
+**Relevancia para el proyecto:**
+- La matriz LDND que generan es la **base de datos ideal** para construir nuestro grafo ponderado
+- Los algoritmos que usan (Neighbor-Joining, SplitsTree) están relacionados con MST y detección de comunidades
+- La información sobre estabilidad de ítems es relevante para decidir pesos en el grafo
+
+**Estado:** No se pudo obtener el PDF gratuito (está detrás de paywall de De Gruyter). Se creó nota detallada en `notas/holman2008-explorations-resumen.md` con resumen basado en información de múltiples fuentes.
+
+### Archivos creados
+
+- `notas/holman2008-explorations-resumen.md` — Resumen detallado del paper
+- `lecturas/holman2008-referencia.md` — Referencia bibliográfica completa (APA, BibTeX)
+
+---
+
+## Sesión 6 — 2026-08-26
+
+### Investigación: Distancia de Levenshtein
+
+Se realizó una investigación completa sobre la **distancia de Levenshtein**, la métrica fundamental de nuestro proyecto.
+
+**Hallazgos principales:**
+
+1. **Origen:** Vladimir Levenshtein (1966), paper con 10,000+ citas en teoría de códigos
+2. **Definición:** Número mínimo de operaciones (inserción, eliminación, sustitución) para transformar una cadena en otra
+3. **Algoritmo:** Programación dinámica con complejidad $O(n^2)$
+4. **Límite inferior:** No existe algoritmo subcuadrático (a menos que SETH sea falsa)
+5. **Variantes:** Damerau-Levenshtein (transposiciones), ponderada, fonológica
+6. **LDND:** La variante ASJP que usamos (doble normalización)
+7. **Aplicaciones:** Dialectometría (r ≈ 0.7), clasificación de lenguas, inteligibilidad (r = 0.82)
+8. **Limitaciones:** Lingüísticamente "ingenua", solo 40-65% de precisión en clasificación
+
+**Relevancia para el proyecto:**
+- La LD tiene propiedades métricas ideales para grafos (no negatividad, simetría, desigualdad triangular)
+- La LDND es la métrica validada para construir nuestro grafo de distancias lingüísticas
+- La complejidad $O(N^2 \cdot M)$ es manejable para miles de lenguas
+- Las optimizaciones (prefijos/sufijos, arreglos de una fila) son factibles en C++
+
+### Archivos creados
+
+- `notas/levenshtein-distancia-resumen.md` — Resumen completo (historia, algoritmo, aplicaciones, limitaciones)
+- `lecturas/levenshtein-referencias.md` — Referencias bibliográficas (Levenshtein 1966, Wagner & Fischer 1974, etc.)
+
+### PDFs generados en escritorio
+
+- `~/Desktop/Levenshtein-Distance-Resumen.pdf` — PDF optimizado para Kindle
+
+---
