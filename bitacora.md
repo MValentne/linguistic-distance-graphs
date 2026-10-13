@@ -288,3 +288,38 @@ Un modelo que asigna a cualquier par de lenguas un *score* de disparidad, combin
 - [ ] Actualizar `propuesta-de-investigacion.md` con la definición formal de LDND
 
 ---
+
+## Sesión 9 — 2026-10-12
+
+### Redacción y revisión de la Introducción
+
+Se trabajó sobre el borrador de la **Introducción** de la memoria, iterando párrafo por párrafo (contexto, justificación, objetivo, enfoque y contribución). El avance quedó guardado, con las correcciones de redacción pendientes, en `borradores/introduccion.md`.
+
+### Decisiones y criterios de redacción acordados
+
+1. **Terminología:** usar "**lenguas**" para idiomas naturales y "**lenguaje**" solo para el de programación (no "lenguajes").
+2. **Voz impersonal** en todo el trabajo ("este trabajo…", "se aplica…"), consistente entre secciones.
+3. **Estructura del embudo:** *Contexto* (por qué importa) → *Justificación* (por qué es computacional + brecha) → *Objetivo* (qué se hará) → *Enfoque y contribución* (desde dónde + qué aporta). Cada sección **avanza**, no recapitula.
+4. **La brecha se enuncia una sola vez** (en *Justificación*), no en dos secciones.
+5. **Argumento de escala con números:** $\binom{N}{2}$ pares × 40 comparaciones ≈ 66 millones de pares con ASJP (en lugar de frases vagas sobre "volumen de datos").
+6. **La contribución debe ser concreta y verificable:** nombrar los cuatro bloques de algoritmos (comunidades, MST, centralidad, caminos mínimos).
+
+### Puntos clave discutidos sobre el antecedente (Chavan et al. 2025)
+
+- Su "grafo" es un **árbol** y sus aristas no tienen peso: el camino entre dos nodos es **único**, así que "caminos mínimos" es trivial (BFS, no Dijkstra realmente). No nombran ningún algoritmo concreto; para el caso de familias cercanas usan DFS.
+- Contrasta con nuestro grafo **completo y ponderado**, donde sí existen rutas indirectas y Dijkstra aporta información real. Este es un argumento central para el gap.
+
+### Archivos creados / modificados
+
+- `borradores/introduccion.md` — Borrador de la Introducción + sección de correcciones pendientes
+
+### Próximos pasos pendientes
+
+- [ ] Aplicar las correcciones de redacción del borrador (`borradores/introduccion.md`)
+- [ ] Redactar el **resumen/abstract** (impersonal)
+- [ ] Explicitar la pregunta de investigación en la Introducción
+- [ ] Descargar ASJP v21 (Zenodo: https://doi.org/10.5281/zenodo.3835822 o CLDF GitHub)
+- [ ] Prototipo Python: leer ASJP, calcular matriz LDND para 50–100 idiomas, exportar CSV
+- [ ] Selección de conjunto de idiomas representativo (cobertura macro-familias)
+
+---
