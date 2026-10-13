@@ -20,22 +20,29 @@ El punto de partida metodológico está probado. Lo que se propone aquí es toma
 
 * **Nodos:** idiomas o dialectos.
 * **Aristas:** distancia lingüística entre dos idiomas.
-* **Peso de cada arista:** promedio de la distancia de Levenshtein normalizada entre pares de palabras correspondientes a los mismos conceptos.
+* **Peso de cada arista:** promedio de la **distancia de Levenshtein normalizada y corregida (LDND)** entre pares de palabras correspondientes a los mismos conceptos.
 
-Formalmente, para un conjunto de conceptos compartidos (C):
+Formalmente, para un conjunto de conceptos compartidos $C$ (lista ASJP de 40 ítems):
 
-$$D(A,B) = \frac{1}{|C|} \sum_{c \in C} LDN(w_{A,c}, w_{B,c})$$
+$$
+D(A,B) = \frac{1}{|C|} \sum_{c \in C} LDND(w_{A,c}, w_{B,c})
+$$
 
 donde:
 
-* $w_{A,c}$ es la palabra correspondiente al concepto $c$ en el idioma $A$,
-* $LDN$ es la distancia de Levenshtein normalizada por longitud.
+* $w_{A,c}$ es la palabra (en ASJPcode) correspondiente al concepto $c$ en el idioma $A$,
+* $LDND$ es la **distancia de Levenshtein normalizada y corregida (doble normalización ASJP)**:
+
+  1. **LD:** distancia de Levenshtein estándar (inserción, eliminación, sustitución = costo 1)
+  2. **LDN:** $LD / \max(|s|, |t|)$ — normalización por longitud de la palabra más larga
+  3. **LDND:** $LDN(s_i, t_i) \big/ \frac{1}{|C|-1} \sum_{j \neq i} LDN(s_i, t_j)$ — corrección por similitud fonológica aleatoria (promedio contra palabras de distinto concepto en el mismo idioma)
 
 ### Propiedades del grafo
 
 - Es **completo** (todos los nodos conectados) si se calcula la distancia entre todos los pares.
-- Los pesos están en el rango $[0, 1]$ (distancia normalizada).
-- Es **no dirigido** con la métrica base (simétrica).
+- Los pesos son **simétricos** y cumplen desigualdad triangular (heredado de LD) → **espacio métrico**.
+- Rango típico: $[0.5, 2.5]$ (no acotado a $[0,1]$ por la corrección LDND).
+- Es **no dirigido** con la métrica base.
 
 ## Algoritmos y análisis propuesto
 
@@ -76,11 +83,11 @@ Contiene listas léxicas para miles de variedades lingüísticas. Es la fuente p
 ## Metodología
 
 1. Seleccionar un conjunto de idiomas representativo.
-2. Obtener listas de Swadesh correspondientes.
-3. Calcular la matriz de distancias (Levenshtein normalizada).
-4. Construir el grafo ponderado.
+2. Obtener listas de Swadesh-ASJP (40 conceptos) correspondientes desde la base de datos ASJP.
+3. Calcular la matriz de distancias **LDND** (Levenshtein normalizada y corregida).
+4. Construir el grafo ponderado completo.
 5. Aplicar los algoritmos de análisis enumerados arriba.
-6. Comparar resultados con clasificaciones lingüísticas conocidas.
+6. Comparar resultados con clasificaciones lingüísticas conocidas (Glottolog, Ethnologue).
 7. Documentar hallazgos y discutir implicancias.
 
 ## Hipótesis
@@ -95,7 +102,10 @@ La red de distancias léxicas entre idiomas tiene una estructura de grafo que re
 
 ## Referencias iniciales
 
-* **ASJP (Automated Similarity Judgment Program)**
-* Heeringa, W. – *Measuring Dialect Pronunciation Differences using Levenshtein Distance*
-* Kondrak, G. – trabajos sobre distancia fonética y cognados en lingüística computacional
+* **ASJP (Automated Similarity Judgment Program)** — Wichmann et al. (eds.) 2025, v21. https://asjp.clld.org/
+* Holman, E. W., Wichmann, S., Brown, C. H., Velupillai, V., Müller, A., & Bakker, D. (2008). Explorations in automated language classification. *Folia Linguistica*, 42(3–4), 331–354. — **Define LDND y lista ASJP de 40 ítems**
+* Heeringa, W. (2004). *Measuring Dialect Pronunciation Differences using Levenshtein Distance*. PhD thesis, Univ. Groningen. — **Validación empírica LDN en dialectometría**
+* Kondrak, G. (2002). Algorithms for language reconstruction. PhD thesis, Univ. Toronto. — **Distancia fonológica ponderada (PLD)**
+* Mikula, K., & Sarkociová Remešíková, M. (2025). A Graph Diffusion Algorithm for Lexical Similarity Evaluation. *arXiv:2504.06816*. — **Damerau-Levenshtein con pesos articulatorios**
+* Levenshtein, V. I. (1966). Binary codes capable of correcting deletions, insertions, and reversals. *Soviet Physics Doklady*, 10(8), 707–710. — **Origen de la métrica**
 * Listas de Swadesh y literatura de lexicoestadística computacional.

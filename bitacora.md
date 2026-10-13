@@ -198,3 +198,93 @@ Se realizó una investigación completa sobre la **distancia de Levenshtein**, l
 - `~/Desktop/Levenshtein-Distance-Resumen.pdf` — PDF optimizado para Kindle
 
 ---
+
+## Sesión 7 — 2026-10-12
+
+### Definición formal de la métrica: LDND (Levenshtein Distance Normalized, Corrected)
+
+Se resolvió la ambigüedad sobre "Levenshtein ponderado" y se definió la métrica exacta para la v1 del proyecto.
+
+**Decisión:** La métrica base es **LDND** (doble normalización ASJP), no Levenshtein ponderado fonológicamente.
+
+### ¿Qué se hizo hoy
+
+- **Informe técnico completo** en `notas/metrica-levenshtein-informe.md` (≈400 líneas) con:
+  - Definición matemática formal de LD → LDN → LDND
+  - Derivación de la distancia final entre idiomas $D(A,B)$
+  - Análisis comparativo de variantes ponderadas (PLD, Mikula 2025, LREC 2026)
+  - Justificación documentada para elegir LDND como baseline v1
+  - Especificación de implementación lista para C++ (pseudocódigo core)
+  - 20 referencias bibliográficas con DOI/URL
+  - Plan de validación empírica (checklist 4 tests)
+
+- **Clarificación conceptual:** "Levenshtein ponderado" en la literatura significa **PLD** (costos por rasgos fonológicos), no una variante simple. Requiere mapeo ASJPcode → IPA → matriz de rasgos (~20 features), lo que añade complejidad y capa de preprocesamiento lingüístico.
+
+### Hallazgos clave
+
+1. **LDND es la métrica que ASJP realmente usa y valida** (Holman et al. 2008; Wichmann et al. 2025). La "Levenshtein normalizada" de la propuesta original corresponde a LDN; faltaba la corrección por similitud aleatoria (denominador LDND).
+
+2. **Ventajas de LDND para v1:**
+   - Reproducibilidad total con árboles ASJP publicados
+   - 15+ años de validación empírica en dialectometría y clasificación
+   - Datos listos: ASJPcode ya alineado por concepto (40 ítems)
+   - Complejidad controlada, paralizable trivialmente
+   - Espacio métrico válido para MST, Dijkstra, clustering
+
+3. **PLD / Mikula 2025 quedan como dirección v2+** (experimento de robustez: ¿cambian los clusters si uso pesos fonológicos?).
+
+### Archivos creados
+
+- `notas/metrica-levenshtein-informe.md` — Informe técnico completo con definiciones, pseudocódigo, referencias y plan de validación
+
+### Próximos pasos pendientes
+
+- [ ] Descargar ASJP v21 (Zenodo: https://doi.org/10.5281/zenodo.3835822 o CLDF GitHub)
+- [ ] Prototipo Python: leer ASJP, calcular matriz LDND para 50–100 idiomas, exportar CSV
+- [ ] Validación spot-check: comparar 10 pares contra distancias publicadas en ASJP
+- [ ] Selección de conjunto de idiomas representativo (cobertura macro-familias)
+- [ ] Actualizar `propuesta-de-investigacion.md` con la definición formal de LDND
+
+---
+
+## Sesión 8 — 2026-10-12
+
+### Obtención y análisis de Chavan et al. (2025) — antecedente más cercano
+
+Se descargó y analizó el paper **"Quantifying Language Disparities: A Distance-Based Predictive Model Using Linguistic Tree Structures"** (Chavan, Lee, Moieni & Legrand, 2025, *Open Journal of Social Sciences* 13(12): 554–570). Es el antecedente más cercano identificado en el estado del arte (§6.1).
+
+**Acceso:** publicación de acceso abierto (CC BY 4.0). PDF descargado en `~/Desktop/Chavan2025-Quantifying-Language-Disparities.pdf`.
+
+### Qué hace el paper
+
+Un modelo que asigna a cualquier par de lenguas un *score* de disparidad, combinando (1) distancia ancestral por **caminos más cortos** sobre un árbol de familias (dataset de Diversity Atlas) y (2) **similitud léxica por Levenshtein** sobre cuatro palabras (water, house, sun, hello). El score final es un decaimiento exponencial $e^{-d}$ con umbrales 0,368 y 0,135. El enfoque está orientado a **comunicación laboral multilingüe**, no a clasificación lingüística.
+
+### Hallazgos / limitaciones clave
+
+1. **Solo 4 palabras**, con traducciones **generadas por Claude AI** (LLM), sin control de calidad nativo.
+2. **El "grafo" es un árbol estático** provisto por la empresa (Diversity Atlas): el único algoritmo aplicable es caminos más cortos. No hay comunidades, centralidad ni MST.
+3. **La LD y la distancia de árbol nunca se combinan en una fórmula:** el score $e^{-d}$ usa solo la distancia de árbol; la LD solo ordena lenguas dentro de la familia.
+4. **Sin validación** contra Glottolog, Ethnologue ni juicios de hablantes.
+5. Publicado en una revista de **ciencias sociales**, con los autores perteneciendo a la empresa dueña del dataset; código en GitHub con **acceso solo a pedido**.
+
+### Relevancia para el proyecto
+
+- Confirma y delimita el **gap**: incluso el trabajo más reciente y "de grafos" se queda en caminos más cortos sobre un árbol curado a mano; nadie explota la estructura completa del grafo de distancias léxicas.
+- Aporta un **contraste metodológico**: el nuestro calcula la distancia directamente del léxico (40 conceptos ASJP, LDND) sin árbol predefinido, y aplica la caja completa de algoritmos de grafos.
+- Sirve como **punto de comparación** en la introducción/estado del arte, no como respaldo metodológico (para eso: Holman et al. 2008; Heeringa 2004; Gooskens & Heeringa 2004).
+
+### Archivos creados
+
+- `notas/chavan2025-quantifying-disparities-resumen.md` — Resumen detallado + limitaciones no declaradas + tabla comparativa con nuestro enfoque
+- `lecturas/chavan2025-referencia.md` — Referencia bibliográfica (APA + BibTeX + enlaces)
+
+### Próximos pasos pendientes
+
+- [ ] Redactar introducción de la memoria (contexto, gap, objetivo, contribución)
+- [ ] Descargar ASJP v21 (Zenodo: https://doi.org/10.5281/zenodo.3835822 o CLDF GitHub)
+- [ ] Prototipo Python: leer ASJP, calcular matriz LDND para 50–100 idiomas, exportar CSV
+- [ ] Validación spot-check: comparar 10 pares contra distancias publicadas en ASJP
+- [ ] Selección de conjunto de idiomas representativo (cobertura macro-familias)
+- [ ] Actualizar `propuesta-de-investigacion.md` con la definición formal de LDND
+
+---
